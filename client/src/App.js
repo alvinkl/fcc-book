@@ -1,41 +1,27 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
-import axios from 'axios';
+import React, { Component } from 'react'
+// import { Router, Route, IndexRoute, hashHistory, browserHistory } from 'react-router'
 
+import Container from './container'
+
+import Home from './components/Home'
+import Login from './components/Login'
+import Signup from './components/Signup'
 
 class App extends Component {
   constructor(props) {
-    super(props);
-
-    this.state = { message: "" };
-
-    this.loadData = this.loadData.bind(this);
-  }
-
-  componentWillMount() {
-    this.loadData();
-  }
-
-  loadData(){
-    axios.get(this.props.url)
-      .then(res => {
-        this.setState({ message: res.data.message });
-      })
+    super(props)
   }
 
   render() {
+      {/*<Router history={ hashHistory }>
+        <Route path='/' component={ Container }>
+          <IndexRoute component={ Container }></IndexRoute>
+        </Route>
+      </Router>*/}
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to { this.state.message }</h2>
-          <h2></h2>
-        </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+      <Container>
+        <Home></Home>
+      </Container>
     );
   }
 }
