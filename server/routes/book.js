@@ -12,7 +12,7 @@ router.post('/', (req, res, next) => {
 
   book.name = req.body.name
   book.image_URI = req.body.URI
-
+  
   book.save(err => err ? res.send(err) : res.json(book))
 })
 
