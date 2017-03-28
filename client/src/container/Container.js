@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router'
 
 export default class Container extends Component {
   render() {
@@ -7,14 +8,14 @@ export default class Container extends Component {
         <nav className="navbar container">
           <div className="container-fluid">
             <div className="navbar-header">
-              <a className="navbar-brand" href="#">bookjump</a>
+              <Link className="navbar-brand" to="/">bookjump</Link>
             </div>
             <ul className="nav navbar-nav">
-              <li className="active"><a href="#">Home</a></li>
+              <li className="active"><Link to="/">Home</Link></li>
             </ul>
             <ul className="nav navbar-nav navbar-right">
-              <li><a href="#">Sign Up</a></li>
-              <li><a href="#">Login</a></li>
+              <li><Link to="/signup">Sign Up</Link></li>
+              <li><Link to="/login">Login</Link></li>
             </ul>
           </div>
         </nav>

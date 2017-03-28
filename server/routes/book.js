@@ -4,10 +4,7 @@ const router = express.Router()
 const Book = require('../models/book')
 
 router.get('/', (req, res, next) => {
-    Book.find((err, books) => {
-      if (err) return res.send(err)
-      res.json(books)
-    })
+    Book.find((err, books) => err ? res.send(err) : res.json(books))
 })
 
 router.post('/', (req, res, next) => {
@@ -16,10 +13,7 @@ router.post('/', (req, res, next) => {
   book.name = req.body.name
   book.image_URI = req.body.URI
 
-  book.save(err => {
-    if (err) return res.send(err)
-    res.json(book)
-  })
+  book.save(err => err ? res.send(err) : res.json(book))
 })
 
 module.exports = router

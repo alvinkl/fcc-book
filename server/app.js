@@ -8,11 +8,15 @@ const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 
+// ROUTES //
 const index = require('./routes/index')
 const book = require('./routes/book')
+const user = require('./routes/user')
+// ROUTES //
 
 const app = express()
-mongoose.connect(process.env.MONGODB)
+// mongoose.connect(process.env.MONGODB)
+mongoose.connect(process.env.MONGOLOCAL)
 mongoose.Promise = global.Promise
 
 // view engine setup
@@ -44,6 +48,7 @@ app.use((req, res, next) => {
 
 app.use('/', index)
 app.use('/book', book)
+app.use('/user', user)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
