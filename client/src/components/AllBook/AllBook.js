@@ -1,5 +1,8 @@
+import { getBook, addBook } from '../../../../GlobalConfig'
 import React, { Component } from 'react'
 import axios from 'axios'
+
+import Book from './components/Book'
 
 const mockingData = [
   { _id: '1' ,name: 'Destined to reign', image_URI: 'http://t3.gstatic.com/images?q=tbn:ANd9GcSwL6hlWe6d3kHx0I4gf74tpAoVZbbrqGCeYsesN3gj0DoAUQTG' },
@@ -18,36 +21,84 @@ const imageStyle = {
 }
 
 export default class AllBook extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { books: [] }
+    this.auth = this.props.route.auth
+    this.user = this.auth.getProfile().identities[0].user_id
+  }
   
   componentWillMount() {
+    this.fetchData()
+  }
+
+  fetchData = () => {
+    axios.get(getBook)
+      .then(res => {
+        this.setState({ books: res.data })
+      })
+      .catch(err => console.error(err))
+  }
+
+  handleTradeBook = () => {
+
+  }
+
+  handleAddBook = (e) => {
+    e.preventDefault()
     
+    const data = {
+      user_id: this.user,
+      name: e.target.name.value,
+      image_URI: 'https://www.discovermeteor.com/images/book.svg',
+      requester: []
+    }
+    console.log('------------------------------------');
+    console.log(data);
+    console.log('------------------------------------');
+    axios.post(addBook, data)
+      .then(res => {
+        this.setState({
+          ...this.state,
+          mybook: res.data.books
+        }, () => this.fetchData())
+      })
   }
 
   render() {
     const totalTradeRequest = 0
     const totalTradeApproved = 0
+    const loc = this.props.location.pathname.split('/')[1]
 
-    const books = mockingData.map(data => (
-      <div className="col-xs-6 col-md-3" key={ data._id }>
-        <a href="#" className="thumbnail">
-          <img src={ data.image_URI } alt={ data.name } />
-        </a>
-      </div>
+    const books = this.state.books.map((data, index) => (
+      <Book key={ index } data={ data } onClick={ this.handleTradeBook }/>
     )) || null
 
-    return (
-      <div class="container">
-        <div className="row">
-          <div className="col-lg-8">
-            <button className="btn btn-success col-lg-4">Your trade request ({ totalTradeRequest } outstanding)</button>
-            <button className="btn btn-primary col-lg-4">Your trade request ({ totalTradeApproved } unapproved)</button>
-          </div>
-        </div>
+    const showH = loc == 'allbook' 
+    ? (<div>
         <h1>All Books:</h1>
         <hr/>
         <p>Click the <i className="fa fa-retweet"></i> to request a trade</p>
+      </div>)
+      : (<div>
+          <h1>My Books:</h1>
+          <hr/>
+          <form onSubmit={ this.handleAddBook }>
+            <div className="form-group">
+                <input type="text" className="form-control" id="name" placeholder='Add Book' ref='bookname'/>
+                <button type='submit' className=''>Add</button>
+              </div>
+          </form>
+        </div>)
+
+    return (
+      <div className="container">
+        { showH }
         <div className="card-deck">
-          { books }
+          {
+            loc == 'allbook' &&
+            books 
+          }
         </div>
       </div>
     )
