@@ -6,8 +6,7 @@ const { UserSchema } = require('./user')
 const BookSchema = new Schema({
   name: { type: String, required: true },
   image_URI: { type: String, required: true },
-  user: { type: UserSchema, required: true },
-  requesters: [ UserSchema ],
+  requesters: [String],
 })
 
-module.exports = mongoose.model('book', BookSchema)
+module.exports = { Book: mongoose.model('book', BookSchema), BookSchema }
