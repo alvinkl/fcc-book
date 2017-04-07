@@ -23,25 +23,32 @@ const imageStyle = {
 export default class AllBook extends Component {
   constructor(props) {
     super(props)
-    this.state = { books: [] }
+    this.state = { all_books: [], user_books: [], location: '' }
     this.auth = this.props.route.auth
     this.user = this.auth.getProfile().identities[0].user_id
   }
   
   componentWillMount() {
     this.fetchData()
+    this.fetchData(this.user)
+    this.setState({ location: this.props.location.pathname.split('/')[1] })
   }
 
-  fetchData = () => {
-    axios.get(getBook)
+  componentWillReceiveProps(nextProps) {
+    this.setState({ location: this.props.location.pathname.split('/')[1] })
+  }
+
+  fetchData = (user_id = '') => {
+    axios.get(`${getBook}/${user_id}`)
       .then(res => {
-        this.setState({ books: res.data })
+        user_id ? 
+          this.setState({ user_books: res.data })
+          : this.setState({ all_books: res.data })
       })
       .catch(err => console.error(err))
   }
 
   handleTradeBook = () => {
-
   }
 
   handleAddBook = (e) => {
@@ -53,28 +60,33 @@ export default class AllBook extends Component {
       image_URI: 'https://www.discovermeteor.com/images/book.svg',
       requester: []
     }
-    console.log('------------------------------------');
-    console.log(data);
-    console.log('------------------------------------');
+
     axios.post(addBook, data)
       .then(res => {
         this.setState({
           ...this.state,
-          mybook: res.data.books
-        }, () => this.fetchData())
+          user_books: res.data.books
+        }, () => this.fetchData(this.user))
       })
   }
 
   render() {
     const totalTradeRequest = 0
     const totalTradeApproved = 0
-    const loc = this.props.location.pathname.split('/')[1]
 
-    const books = this.state.books.map((data, index) => (
-      <Book key={ index } data={ data } onClick={ this.handleTradeBook }/>
-    )) || null
+    const allBook = this.state.location === 'allbook' ? 
+      this.state.all_books.map((data, index) => (
+        <Book key={ index } data={ data } onClick={ this.handleTradeBook }/>
+      ))
+      : null
 
-    const showH = loc == 'allbook' 
+    const myBook = this.state.location === 'mybook' ? 
+      this.state.user_books.map((data, index) => (
+        <Book key={ index } data={ data } />
+      ))
+      : null
+
+    const showH = this.state.location == 'allbook' 
     ? (<div>
         <h1>All Books:</h1>
         <hr/>
@@ -96,8 +108,12 @@ export default class AllBook extends Component {
         { showH }
         <div className="card-deck">
           {
-            loc == 'allbook' &&
-            books 
+            this.state.location == 'allbook' &&
+            allBook 
+          }
+          {
+            this.state.location == 'mybook' &&
+            myBook
           }
         </div>
       </div>

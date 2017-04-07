@@ -4,8 +4,16 @@ const router = express.Router()
 const { Book } = require('../models/book')
 const { User } = require('../models/user')
 
+router.get('/:uid', (req, res, next) => {
+  console.log('------------------------------------');
+  console.log(req.params.uid);
+  console.log('------------------------------------');
+  const owner = req.params.uid 
+  Book.find({ owner }, (err, books) => err ? res.send(err) : res.json(books))
+})
+
 router.get('/', (req, res, next) => {
-  User.find((err, books) => err ? res.send(err) : res.json(books))
+  Book.find((err, books) => err ? res.send(err) : res.json(books))
 })
 
 router.post('/', (req, res, next) => {
@@ -15,29 +23,9 @@ router.post('/', (req, res, next) => {
   book.name = req.body.name
   book.image_URI = req.body.image_URI
   book.requester = req.body.requester
-  book.save(err => {
-    if (err) return res.send(err)
-  })
-    .then(() => {
-      console.log('------------------------------------');
-      console.log(book);
-      console.log('------------------------------------');
-      User.findOne({ user_id: req.body.user_id }, (err, user) => {
-        console.log('------------------------------------');
-        console.log(user);
-        console.log('------------------------------------');
-        user.books.push(book)
-        user.save(err => err ? res.send(err) : res.json(user))
-      })
-      
-
-    })
-
-  book.name = req.body.name
-  book.image_URI = req.body.URI
-  // add user
-
+  book.owner = req.body.user_id
   book.save(err => err ? res.send(err) : res.json(book))
+
 })
 
 module.exports = router
