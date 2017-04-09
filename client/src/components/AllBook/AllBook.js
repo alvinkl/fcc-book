@@ -1,4 +1,4 @@
-import { getBook, addBook } from '../../../../GlobalConfig'
+import { getBook, addBook, updateBook } from '../../../../GlobalConfig'
 import React, { Component } from 'react'
 import axios from 'axios'
 
@@ -48,7 +48,9 @@ export default class AllBook extends Component {
       .catch(err => console.error(err))
   }
 
-  handleTradeBook = () => {
+  handleTradeBook = (id) => {
+    axios.post(updateBook, { user_id: this.user, book_id: id })
+      .catch(err => console.error(err))
   }
 
   handleAddBook = (e) => {
@@ -76,7 +78,7 @@ export default class AllBook extends Component {
 
     const allBook = this.state.location === 'allbook' ? 
       this.state.all_books.map((data, index) => (
-        <Book key={ index } data={ data } onClick={ this.handleTradeBook }/>
+        <Book key={ index } data={ data } handleClick={ this.handleTradeBook.bind(null, data._id) }/>
       ))
       : null
 
