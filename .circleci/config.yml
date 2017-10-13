@@ -7,24 +7,35 @@ jobs:
   build:
     working_directory: ~/fcc-book
     docker:
-      - image: circleci/node:4.8.2
+        - image: circleci/node:4.8.2
     steps:
-      - checkout
-      - run:
-          name: update-npm
-          command: 'sudo npm install -g npm@latest'
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: install-npm-wee
-          command: npm install
-      - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-          paths:
-            - ./node_modules
-      - run:
-          name: test
-          command: npm test
-      - store_artifacts:
-          path: coverage
-          prefix: coverage
+        - checkout
+
+        - restore_cache:
+            key: ee-client-{{ checksum "./client/package.json" }}
+        - restore_cache:
+            key: ee-server-{{ checksum "./server/package.json" }}
+
+        - run:
+            name: install client dependencies
+            command: 'cd client && npm install'      
+        - run:
+            name: install server dependencies
+            command: 'cd server && npm install'
+
+        - save_cache:
+            key: ee-client-{{ checksum "./client/package.json" }}
+            paths:
+                - ./client/node_modules
+        - save_cache:
+            key: ee-server-{{ checksum "./server/package.json" }}
+            paths:
+                - ./server/node_modules
+        
+        - run:
+            name: building client
+            command: 'cd ./client && npm run build'
+        
+        - store_artifacts:
+            path: ./client/build
+            prefix: build
