@@ -7,7 +7,7 @@ jobs:
   build:
     working_directory: ~/fcc-book
     docker:
-      - image: circleci/node:8.1.1
+      - image: circleci/node:4.8.2
     steps:
       - checkout
       - run:
